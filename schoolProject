@@ -1,0 +1,100 @@
+//ECET311
+
+
+const int button1 = 2;         
+const int button2 = 3;
+const int button3 = 4;
+int buttonState1 = 0;       //currrent state for 1st button
+int buttonState2 = 0;      // current state 2nd button
+int buttonState3 = 0;      // current state 3rd button
+
+#include <Adafruit_GFX.h>
+#include <Adafruit_NeoMatrix.h>
+#include <Adafruit_NeoPixel.h>
+
+#ifndef PSTR
+ #define PSTR // Make Arduino Due happy
+ 
+#endif
+
+#define PIN 6 // Data pin from the Neopixle w8211 lights to the arduino board
+
+Adafruit_NeoMatrix matrix = Adafruit_NeoMatrix(21, 6, PIN,  //first parameter is width second is height third is digital pin 6
+  NEO_MATRIX_TOP     + NEO_MATRIX_RIGHT +  // This is the orientation of the lights Its reading from the top right corner
+  NEO_MATRIX_ROWS + NEO_MATRIX_ZIGZAG, // lined up in rows and going in a zig zag formation
+  NEO_GRB            + NEO_KHZ800); 
+
+const uint16_t colors[] = {
+  matrix.Color(255, 0, 0), matrix.Color(0, 255, 0), matrix.Color(0, 0, 255) }; // color pattern. Should change text color from red to green to blue after each sentence
+
+void setup() {
+ 
+  matrix.begin();
+  matrix.setTextWrap(false);
+  matrix.setBrightness(100);
+  matrix.setTextColor(colors[0]);
+  pinMode (button1, INPUT);
+  pinMode(button2, INPUT);
+  pinMode (PIN, OUTPUT);
+  
+}
+
+int x    = matrix.width();
+int pass = 0;
+
+void loop() 
+{
+  buttonState1 = digitalRead(button1);
+  if (buttonState1 == HIGH)             // First if statement for button one
+  {
+  matrix.fillScreen(0);                // clears screen
+  matrix.setCursor(x, -1);            // where it starts typing the text from
+  matrix.print(F("ez clap"));
+  if(--x < -36) {                   // decrementing so that all the words can fit (its for the scroll)
+    x = matrix.width();
+    if(++pass >= 3) pass = 0;
+    matrix.setTextColor(colors[pass]);
+  }
+  matrix.show();
+  delay(100);
+}
+else { 
+  digitalWrite(PIN,LOW);
+}
+
+buttonState2 = digitalRead(button2); // Second if statement for button two
+if (buttonState2 == HIGH)
+{
+  matrix.fillScreen(0);
+  matrix.setCursor(x, -1);
+  matrix.print(F("gg go next"));
+  if(--x < -40) {
+    x = matrix.width();
+    if(++pass >= 3) pass = 0;
+    matrix.setTextColor(colors[pass]);
+  }
+  matrix.show();
+  delay(100);
+}
+else { 
+  digitalWrite(PIN,LOW);
+
+}
+buttonState3 = digitalRead(button3);  //third if statement for button 3
+if (buttonState3 == HIGH)
+{
+  matrix.fillScreen(0);
+  matrix.setCursor(x, -1);
+  matrix.print(F("can has good grade??"));
+  if(--x < -100) {
+    x = matrix.width();
+    if(++pass >= 3) pass = 0;
+    matrix.setTextColor(colors[pass]);
+  }
+  matrix.show();
+  delay(100);
+}
+else { 
+  digitalWrite(PIN,LOW);
+}
+}
